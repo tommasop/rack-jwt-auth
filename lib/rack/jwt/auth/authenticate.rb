@@ -34,7 +34,6 @@ module Rack
         end
 
         def with_authorization(env)
-          puts authenticated_route?(env)
           if authenticated_route?(env)
             header  = env['HTTP_AUTHORIZATION']
 
