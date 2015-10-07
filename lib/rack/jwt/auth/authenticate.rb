@@ -46,10 +46,9 @@ module Rack
             payload = AuthToken.valid?(token, @secret)
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
-          end
 
-          puts payload 
-          yield payload[0]
+            yield payload[0]
+          end
         end
 
         def compile_paths(paths)
