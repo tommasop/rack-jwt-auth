@@ -29,7 +29,7 @@ module Rack
           if @authenticated_routes.length > 0
             @authenticated_routes.find { |route| route =~ env['PATH_INFO'] }
           else
-            !@unauthenticated_routes.find { |route| route =~ env['PATH_INFO'] }
+            !@unauthenticated_routes.find { |route| route =~ /#{env['PATH_INFO']}/ }
           end
         end
 
