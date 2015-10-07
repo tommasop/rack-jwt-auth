@@ -49,7 +49,7 @@ module Rack
           end
 
           puts payload 
-          yield payload
+          yield payload[0]
         end
 
         def compile_paths(paths)
