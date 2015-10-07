@@ -47,8 +47,10 @@ module Rack
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
 
-            yield payload[0]
+            payload = payload[0] if payload[0]
           end
+          
+          yield payload
         end
 
         def compile_paths(paths)
