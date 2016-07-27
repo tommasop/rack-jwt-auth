@@ -36,6 +36,7 @@ module Rack
         def with_authorization(env)
           if authenticated_route?(env)
             header  = env['HTTP_AUTHORIZATION']
+            puts header
 
             return [401, {}, [{message: 'Missing Authorization header'}.to_json]] if header.nil?
 
@@ -44,6 +45,7 @@ module Rack
             return [401, {}, [{message: 'Format is Authorization: Bearer [token]'}.to_json]] unless scheme.match(/^Bearer$/i) && !token.nil?
 
             payload = AuthToken.valid?(token, @secret)
+            puts payload
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
 
