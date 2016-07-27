@@ -18,8 +18,7 @@ module Rack
 
         def call(env)
           with_authorization(env) do |payload|
-            puts payload.to_json
-            env['rack.jwt.session'] = payload.to_json
+            env['rack.jwt.session'] = payload.class == String ? payload : payload.to_json
             @app.call(env)
           end
         end
