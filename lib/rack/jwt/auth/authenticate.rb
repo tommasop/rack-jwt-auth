@@ -18,7 +18,8 @@ module Rack
 
         def call(env)
           with_authorization(env) do |payload|
-            env['rack.jwt.session'] = payload
+            puts payload
+            env['rack.jwt.session'] = Oj.load(payload)
             @app.call(env)
           end
         end
@@ -49,7 +50,6 @@ module Rack
 
             payload = payload[0] if payload[0]
           end
-          puts payload
           
           yield payload
         end
