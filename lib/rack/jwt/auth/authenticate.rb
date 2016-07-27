@@ -19,7 +19,8 @@ module Rack
         def call(env)
           with_authorization(env) do |payload|
             puts payload
-            env['rack.jwt.session'] = Oj.load(payload)
+            puts payload.class
+            env['rack.jwt.session'] = payload
             @app.call(env)
           end
         end
