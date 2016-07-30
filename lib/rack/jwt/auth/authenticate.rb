@@ -15,10 +15,19 @@ module Rack
           @authenticated_routes   = compile_paths(opts[:only])
           @unauthenticated_routes = compile_paths(opts[:except])
         end
-
+        
         def call(env)
+          dup._call(env)
+        end
+
+        def _call(env)
           with_authorization(env) do |payload|
-            env['rack.jwt.session'] = payload.class == String ? payload : payload.to_json
+            to_be_stored = payload.class == String ? payload : payload.to_json
+            if Object.constants.include?(:Rails)
+              env['rack.session'] = to_be_stored 
+            else 
+              env['rack.jwt.session'] = to_be_stored
+            end
             @app.call(env)
           end
         end
