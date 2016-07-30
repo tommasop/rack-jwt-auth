@@ -24,7 +24,7 @@ module Rack
           with_authorization(env) do |payload|
             to_be_stored = payload.class == String ? payload : payload.to_json
             if Object.constants.include?(:Rails)
-              env['rack.session'] = to_be_stored 
+              env['rack.session']["jwt_token"] = to_be_stored 
             else 
               env['rack.jwt.session'] = to_be_stored
             end
