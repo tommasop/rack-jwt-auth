@@ -51,8 +51,17 @@ module Rack
             payload = AuthToken.valid?(token, @secret)
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
-
-            payload = payload[0] if payload[0]
+            
+            if payload[0]
+              # I take into account the situation where I have another token
+              # folded into the external one
+              if payload[0]["external_token"]
+                ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret) 
+                ext_payload = ext_payload[0] if ext_payload[0]
+              end
+              payload = payload[0] 
+              ext_payload || payload
+            end
           end
           
           yield payload
