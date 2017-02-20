@@ -22,8 +22,20 @@ module Rack
 
         def _call(env)
           with_authorization(env) do |payload|
-            to_be_stored = payload.class == String ? payload : payload.to_json
-            env['rack.jwt.session'] = to_be_stored
+            if payload.class == Array
+              payload.map!{|tk| tk.class == String ? tk : tk.to_json } 
+              to_be_stored, to_be_stored_ext = payload
+            else
+              to_be_stored = payload.class == String ? payload : payload.to_json
+            end
+            
+            if to_be_stored_ext
+              env['rack.jwt.session'] = to_be_stored
+              env['rack.jwt.ext.session'] = to_be_stored_ext
+            else
+              env['rack.jwt.session'] = to_be_stored
+            end
+
             @app.call(env)
           end
         end
@@ -59,8 +71,8 @@ module Rack
                 ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret) 
                 ext_payload = ext_payload[0] if ext_payload[0]
               end
-              payload = payload[0] 
-              ext_payload || payload
+
+              payload = ext_payload ? [ext_payload, payload[0]] : payload[0]
             end
           end
           
