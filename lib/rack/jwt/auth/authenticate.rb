@@ -8,9 +8,10 @@ module Rack
           @app  = app
           @opts = opts
 
-          raise 'Secret must be provided' if opts[:secret].nil?
+          raise 'Secret must be provided' if opts[:jwt_secret].nil?
 
-          @secret = opts[:secret]
+          @secret = opts[:jwt_secret]
+          @key = opts[:jwe_key]
 
           @authenticated_routes   = compile_paths(opts[:only])
           @unauthenticated_routes = compile_paths(opts[:except])
@@ -60,7 +61,7 @@ module Rack
 
             return [401, {}, [{message: 'Format is Authorization: Bearer [token]'}.to_json]] unless scheme.match(/^Bearer$/i) && !token.nil?
 
-            payload = AuthToken.valid?(token, @secret)
+            payload = AuthToken.valid?(token, @secret, @key)
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
             
@@ -68,7 +69,7 @@ module Rack
               # I take into account the situation where I have another token
               # folded into the external one
               if payload[0]["external_token"]
-                ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret) 
+                ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret, @key) 
                 ext_payload = ext_payload[0] if ext_payload[0]
               end
 
