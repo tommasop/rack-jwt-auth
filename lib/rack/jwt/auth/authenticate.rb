@@ -15,6 +15,7 @@ module Rack
 
           @authenticated_routes   = compile_paths(opts[:only])
           @unauthenticated_routes = compile_paths(opts[:except])
+          @encrypted_routes = compile_paths(opts[:encrypt])
         end
         
         def call(env)
@@ -51,6 +52,10 @@ module Rack
           end
         end
 
+        def encrypted_route?(env)
+          @encrypted_routes.find { |route| route =~ env['PATH_INFO'] } if @encrypted_routes.length > 0
+        end
+
         def with_authorization(env)
           if authenticated_route?(env)
             header  = env['HTTP_AUTHORIZATION']
@@ -61,7 +66,11 @@ module Rack
 
             return [401, {}, [{message: 'Format is Authorization: Bearer [token]'}.to_json]] unless scheme.match(/^Bearer$/i) && !token.nil?
 
-            payload = AuthToken.valid?(token, @secret, @key)
+            if encrypted_route?(env)
+              payload = AuthToken.valid?(token, @secret, @key)
+            else
+              payload = AuthToken.valid?(token, @secret)
+            end
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
             
@@ -69,7 +78,11 @@ module Rack
               # I take into account the situation where I have another token
               # folded into the external one
               if payload[0]["external_token"]
-                ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret, @key) 
+                if encrypted_route?(env)
+                  ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret, @key)
+                else
+                  ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret) 
+                end
                 ext_payload = ext_payload[0] if ext_payload[0]
               end
 
