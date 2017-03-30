@@ -6,7 +6,7 @@ module Rack
 
         def self.issue_token(payload, secret, key = nil)
           token = JWT.encode(payload, secret)
-          key ? JWE.encrypt(token, key, alg: 'dir') : token
+          key ? JWE.encrypt(token, key, alg: 'dir', enc: 'A128CBC-HS256') : token
         end
 
         def self.valid?(token, secret, key = nil)
