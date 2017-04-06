@@ -18,7 +18,8 @@ module Rack
             p "T2 " + token
             p "T3 " + JWT.decode(token, secret)
             JWT.decode(token, secret)
-          rescue
+          rescue => error
+            p error
             false
           end
         end
