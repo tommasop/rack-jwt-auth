@@ -12,7 +12,7 @@ module Rack
         def self.valid?(token, secret, key = nil)
           p "T1 " + token
           p "Secret " + secret
-          p "Key " + key || "none"
+          p "Key " + key if key
           begin
             token = JWE.decrypt(token, key) if key
             p "T2 " + token
