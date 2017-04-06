@@ -51,7 +51,7 @@ module Rack
         def encrypted_route?(env)
           p env['PATH_INFO']
           p @encrypted_routes
-          p @encryptes_routes.find{|route| p route =~ env['PATH_INFO'] }
+          p @encrypted_routes.find{|route| p route =~ env['PATH_INFO'] }
           @encrypted_routes.find { |route| route =~ env['PATH_INFO'] } if @encrypted_routes.length > 0
         end
 
