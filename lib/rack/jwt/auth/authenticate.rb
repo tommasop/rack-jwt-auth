@@ -68,7 +68,7 @@ module Rack
               payload = AuthToken.valid?(token, @secret)
             end
 
-            p "Payload " + payload
+            p "Payload " + payload[0]
 
             return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
             
