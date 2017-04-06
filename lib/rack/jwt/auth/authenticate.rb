@@ -19,10 +19,6 @@ module Rack
         end
         
         def call(env)
-          dup._call(env)
-        end
-
-        def _call(env)
           with_authorization(env) do |payload|
             if payload.class == Array
               payload.map!{|tk| tk.class == String ? tk : tk.to_json } 
