@@ -16,7 +16,7 @@ module Rack
           begin
             token = JWE.decrypt(token, key) if key
             p "T2 " + token
-            p "T3 " + JWT.decode(token, secret)[0]
+            p JWT.decode(token, secret)[0]
             JWT.decode(token, secret)
           rescue => error
             p error
