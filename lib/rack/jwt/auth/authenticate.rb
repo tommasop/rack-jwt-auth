@@ -77,11 +77,11 @@ module Rack
               # I take into account the situation where I have another token
               # folded into the external one
               if payload[0]["external_token"]
-                if encrypted_route?(env)
-                  ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret, @key)
-                else
+                #if encrypted_route?(env)
+                #  ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret, @key)
+                #else
                   ext_payload = AuthToken.valid?(payload[0]["external_token"], @secret) 
-                end
+                #end
                 ext_payload = ext_payload[0] if ext_payload[0]
               end
 
