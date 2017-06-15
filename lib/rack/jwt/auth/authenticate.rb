@@ -15,7 +15,7 @@ module Rack
 
           @authenticated_routes   = compile_paths(opts[:only])
           @unauthenticated_routes = compile_paths(opts[:except])
-          @encrypted_routes = compile_paths(opts[:encrypt])
+          @encrypted_routes = opts[:encrypt] == :all ? opts[:encrypt] : compile_paths(opts[:encrypt])
         end
         
         def call(env)
@@ -49,9 +49,9 @@ module Rack
         end
 
         def encrypted_route?(env)
-          p env['PATH_INFO']
-          p @encrypted_routes
-          p @encrypted_routes.find{|route| p route =~ env['PATH_INFO'] }
+          Loga.logger.debug env['PATH_INFO']
+          Loga.logger.debug @encrypted_routes
+          return true if @encrypted_routes == :all
           @encrypted_routes.find { |route| route =~ env['PATH_INFO'] } if @encrypted_routes.length > 0
         end
 
