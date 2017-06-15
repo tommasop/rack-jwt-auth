@@ -9,8 +9,8 @@ require "rack/jwt/auth/authenticate"
 # configuration if existing or rescue error
 # to provide new configuration
 begin 
-  config = Loga.configuration
-  config.service_name = "RACK_JWT_AUTH"
+  Loga.configuration.service_name = "RACK_JWT_AUTH"
+  Loga.logger.formatter = Loga.configuration.send(:assign_formatter)
 rescue Loga::ConfigurationError
   Loga.configure(
     filter_parameters: [:password],
