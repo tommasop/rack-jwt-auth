@@ -59,11 +59,11 @@ module Rack
           if authenticated_route?(env)
             header  = env['HTTP_AUTHORIZATION']
 
-            return [401, {}, [{message: 'Missing Authorization header'}.to_json]] if header.nil?
+            return [401, {}, [{error: {code: "missing_auth_header", message: 'Missing Authorization header'}}.to_json]] if header.nil?
 
             scheme, token = header.split(" ")
 
-            return [401, {}, [{message: 'Format is Authorization: Bearer [token]'}.to_json]] unless scheme.match(/^Bearer$/i) && !token.nil?
+            return [401, {}, [{error: {code: "wrong_auth_header_format", message: 'Format is Authorization: Bearer [token]'}}.to_json]] unless scheme.match(/^Bearer$/i) && !token.nil?
 
             if encrypted_route?(env)
               payload = AuthToken.valid?(token, @secret, @key)
@@ -71,7 +71,7 @@ module Rack
               payload = AuthToken.valid?(token, @secret)
             end
 
-            return [401, {}, [{message: 'Invalid Authorization'}.to_json]] unless payload
+            return [401, {}, [{ error: { code:"invalid_access_tokent", message: "Invalid Access Token"}}.to_json]] unless payload
             
             if payload[0]
               # I take into account the situation where I have another token
