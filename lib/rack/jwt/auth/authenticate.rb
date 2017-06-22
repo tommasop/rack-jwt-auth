@@ -71,7 +71,7 @@ module Rack
               payload = AuthToken.valid?(token, @secret)
             end
 
-            return [401, {}, [{ error: { code:"invalid_access_tokent", message: "Invalid Access Token"}}.to_json]] unless payload
+            return [401, {}, [{ error: { code:"invalid_access_token", message: "Invalid Access Token"}}.to_json]] unless payload
             
             if payload[0]
               # I take into account the situation where I have another token
